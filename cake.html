@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>🎂 Cake Celebration! 🎉</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+        html, body {
+            background-image: url('./backgroundd.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #counter {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1000;
+            background: #fcd34d;
+            color: #92400e;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            pointer-events: none;
+        }
+
+        #candle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .candle {
+            position: absolute;
+            width: 50px;
+            height: 90px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: floatCandle 4s ease-in-out infinite alternate;
+        }
+
+            .candle:hover {
+                transform: scale(1.2) rotate(10deg);
+            }
+
+        @keyframes floatCandle {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-20px);
+            }
+        }
+
+        #cake-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 20;
+            text-align: center;
+        }
+
+        #cake-img {
+            width: 200px;
+            transition: transform 0.3s;
+        }
+
+            #cake-img:hover {
+                transform: scale(1.1);
+            }
+
+        #hover-message {
+            color: #d946ef;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #cake-container:hover #hover-message {
+            opacity: 1;
+        }
+
+        #flower-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .flower {
+            position: absolute;
+            width: 64px;
+            height: auto;
+            animation: fall 2.8s ease-in forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-70px) rotate(0deg);
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(var(--target-top)) rotate(720deg);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="birthdaySong" src="./birthdaysong.mp3"></audio>
+
+    <div id="counter">Candles lit: 0</div>
+    <div id="candle-container"></div>
+
+    <div id="cake-container" title="Click me!">
+        <div id="hover-message">Click me 🎂</div>
+        <img id="cake-img" src="./cake.png" alt="Birthday Cake" />
+    </div>
+
+    <div id="flower-container"></div>
+
+    <script>
+        const candleContainer = document.getElementById('candle-container');
+        const counterDisplay = document.getElementById('counter');
+        const cakeContainer = document.getElementById('cake-container');
+        const birthdaySong = document.getElementById('birthdaySong');
+        const flowerContainer = document.getElementById('flower-container');
+
+        const candleImgURL = "./candle.png";
+        const flowerImages = ["./flower1.png"];
+
+        const flowerSize = 64;
+        const spacing = 4;
+        const totalWidth = flowerSize + spacing;
+
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+
+        const flowersPerRow = Math.floor(screenW / totalWidth);
+        const maxRows = Math.floor(screenH / totalWidth);
+        const flowerGrid = Array.from({ length: maxRows }, () => Array(flowersPerRow).fill(false));
+
+        const candleCount = 25;
+        let candlesLit = 0;
+        let candlesSpawned = 0;
+        let spawningActive = false;
+
+        function getNextEmptyPosition() {
+            for (let row = maxRows - 1; row >= 0; row--) {
+                for (let col = 0; col < flowersPerRow; col++) {
+                    if (!flowerGrid[row][col]) {
+                        flowerGrid[row][col] = true;
+                        return {
+                            left: col * totalWidth,
+                            top: row * totalWidth
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function spawnFlower() {
+            const pos = getNextEmptyPosition();
+            if (!pos) return;
+
+            const flower = document.createElement('img');
+            flower.src = flowerImages[Math.floor(Math.random() * flowerImages.length)];
+            flower.className = 'flower';
+            flower.style.left = `${pos.left}px`;
+            flower.style.setProperty('--target-top', `${pos.top}px`);
+            flowerContainer.appendChild(flower);
+        }
+
+        function startFlowerRain() {
+            let total = flowersPerRow * maxRows;
+            let spawned = 0;
+            const interval = setInterval(() => {
+                if (spawned >= total) {
+                    clearInterval(interval);
+                    return;
+                }
+                spawnFlower();
+                spawned++;
+            }, 80);
+        }
+
+        function createCandle() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const candle = document.createElement('img');
+            candle.src = candleImgURL;
+            candle.classList.add('candle');
+
+            const x = Math.random() * (width - 50);
+            const y = Math.random() * (height - 90);
+            candle.style.left = `${x}px`;
+            candle.style.top = `${y}px`;
+
+            candle.addEventListener('click', () => {
+                candle.remove();
+                candlesLit++;
+                counterDisplay.textContent = `Candles lit: ${candlesLit}`;
+
+                if (candlesSpawned < candleCount) {
+                    spawnNextCandle();
+                }
+
+                if (candlesLit === candleCount) {
+                    startFlowerRain(); // 🎉 Now triggered only after 25 candles are lit
+                }
+            });
+
+            return candle;
+        }
+
+        function spawnNextCandle() {
+            const c = createCandle();
+            candleContainer.appendChild(c);
+            candlesSpawned++;
+        }
+
+        cakeContainer.addEventListener('click', () => {
+            if (spawningActive) return;
+            spawningActive = true;
+
+            birthdaySong.play().catch(err => console.log(err));
+            cakeContainer.style.pointerEvents = 'none';
+            cakeContainer.style.opacity = '0.7';
+            document.getElementById('hover-message').style.opacity = '0';
+
+            spawnNextCandle();
+        });
+    </script>
+</body>
+</html>

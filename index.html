@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>🎂 Happy Birthday, babu! 💖</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+        html, body {
+            background-image: url('./background1.png');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow-x: hidden;
+        }
+
+        #page-wrapper {
+            transform: scale(0.85);
+            transform-origin: top center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .cat-button {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            pointer-events: auto;
+            border-radius: 12px;
+            transition: transform 0.3s;
+            overflow: hidden;
+            padding: 0;
+        }
+
+            .cat-button img {
+                width: 100%;
+                height: 100%;
+                user-select: none;
+                pointer-events: none;
+                display: block;
+            }
+
+            .cat-button:hover img {
+                transform: scale(1.2) rotate(5deg);
+                transition: transform 0.3s;
+            }
+
+        #cat-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #generateButton {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1000;
+            background-color: #ec4899;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            user-select: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            pointer-events: auto;
+        }
+
+            #generateButton:hover {
+                background-color: #db2777;
+            }
+
+        #maxMessage {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fbcfe8;
+            color: #be123c;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1001;
+        }
+
+        #hugMessage {
+            position: relative;
+            z-index: 20;
+        }
+
+        /* Gift Wrap Overlay */
+        #giftWrap {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #unwrapBtn {
+            background: #fff;
+            color: #ec4899;
+            padding: 14px 28px;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+            #unwrapBtn:hover {
+                background-color: #fbcfe8;
+            }
+
+        /* Racing Easter Egg */
+        #racingFlag {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            z-index: 999;
+            cursor: pointer;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        #racingCatsContainer {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 900;
+        }
+
+        .racing-cat {
+            position: absolute;
+            width: 80px;
+            height: auto;
+            animation: raceAcross 3s linear forwards;
+            z-index: 901;
+        }
+
+        @keyframes raceAcross {
+            0% {
+                transform: translateX(-150px);
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(110vw);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Gift Wrap Overlay -->
+    <div id="giftWrap">
+        <h1 class="text-white text-4xl font-bold">🎁 A Birthday Surprise Awaits! 🎁</h1>
+        <button id="unwrapBtn">Unwrap Gift 🎀</button>
+    </div>
+
+    <!-- Add Cats Button -->
+    <button id="generateButton" title="Add more cats!">Add Cats 🐱</button>
+    <div id="maxMessage">Maximum 700 cats reached! 🎉</div>
+
+
+    <div id="page-wrapper" class="text-center text-pink-800 py-10 hidden">
+        <h1 class="text-5xl font-bold mb-4">🎉 Happy Birthday, Lilia! 🎉</h1>
+        <p class="text-lg mb-6 max-w-xl mx-auto">
+            candles and wishes type shit (im non challant like that) 🐾💞
+        </p>
+
+        <!-- Birthday Cake only -->
+        <div class="mt-10">
+            <a href="cake.html">
+                <img src="./cake.png" alt="Birthday Cake" class="w-48 mx-auto floating cursor-pointer" />
+            </a>
+        </div>
+
+        <!-- Hug Button -->
+        <button id="hugButton" class="mt-8 px-8 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-full shadow-xl transition-all cursor-pointer z-20">
+            Send a Virtual Hug 🤗
+        </button>
+        <p id="hugMessage" class="mt-4 text-xl text-rose-600 hidden z-20">A BIG warm hug is flying your way 💌🐱💖</p>
+        <p class="mt-2 text-sm text-gray-600">(Click the cake for a surprise!)</p>
+    </div>
+
+    <div id="cat-container"></div>
+
+    <!-- Background Music -->x
+
+    <!-- Racing Flag Easter Egg -->
+    <img id="racingFlag" src="./racingflag.png" alt="Racing Flag" style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; cursor:pointer; z-index:1000;" title="Start the Cat Race!" />
+
+    <!-- Racing Sounds (can be empty, they'll be loaded dynamically) -->
+    <!-- No <audio> elements needed here since they will be created dynamically -->
+
+    <script>
+        const hugBtn = document.getElementById('hugButton');
+        const hugMsg = document.getElementById('hugMessage');
+        const catContainer = document.getElementById('cat-container');
+        const generateBtn = document.getElementById('generateButton');
+        const maxMessage = document.getElementById('maxMessage');
+        const music = document.getElementById('bgMusic');
+        const unwrapBtn = document.getElementById('unwrapBtn');
+        const giftWrap = document.getElementById('giftWrap');
+        const pageWrapper = document.getElementById('page-wrapper');
+
+        hugBtn.addEventListener('click', () => {
+            hugMsg.classList.remove('hidden');
+            hugMsg.classList.add('animate-bounce');
+            hugBtn.classList.add('animate-bounce');
+        });
+
+        const catImages = ['./kitty1.png', './kitty2.png', './kitty3.png', './kitty4.png', './kitty5.png'];
+        const catSize = 80;
+        const maxCats = 700;
+        let currentCats = 0;
+
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const forbiddenZone = {
+            x: screenWidth / 2 - 250,
+            y: screenHeight / 2 - 250,
+            width: 500,
+            height: 500
+        };
+
+        function isInsideForbiddenZone(x, y) {
+            return (
+                x + catSize > forbiddenZone.x &&
+                x < forbiddenZone.x + forbiddenZone.width &&
+                y + catSize > forbiddenZone.y &&
+                y < forbiddenZone.y + forbiddenZone.height
+            );
+        }
+
+        function createCat(i) {
+            const btn = document.createElement('button');
+            btn.classList.add('cat-button');
+
+            let x, y, attempts = 0;
+            do {
+                x = Math.random() * (screenWidth - catSize);
+                y = Math.random() * (screenHeight - catSize);
+                attempts++;
+                if (attempts > 100) break;
+            } while (isInsideForbiddenZone(x, y));
+
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
+
+            const img = document.createElement('img');
+            img.src = catImages[i % catImages.length];
+            img.alt = 'Cute Cat';
+
+            btn.appendChild(img);
+
+            btn.addEventListener('click', () => {
+                alert(`You look cute x#${currentCats}!`);
+            });
+
+            return btn;
+        }
+
+        function addCats(number) {
+            if (currentCats >= maxCats) {
+                maxMessage.style.display = 'block';
+                return;
+            }
+            maxMessage.style.display = 'none';
+
+            const catsToAdd = Math.min(number, maxCats - currentCats);
+            for (let i = 0; i < catsToAdd; i++) {
+                const catBtn = createCat(currentCats + i);
+                catContainer.appendChild(catBtn);
+            }
+            currentCats += catsToAdd;
+        }
+
+        generateBtn.addEventListener('click', () => addCats(1));
+
+        addCats(10);
+
+        unwrapBtn.addEventListener('click', () => {
+            giftWrap.style.display = 'none';
+            pageWrapper.classList.remove('hidden');
+            music.play();
+        });
+
+        // === RACING CATS EASTER EGG ===
+        const racingFlag = document.getElementById("racingFlag");
+
+        const racingCatImages = [
+            './racingcat1.png',
+            './racingcat2.png',
+            './racingcat3.png'
+        ];
+
+        const racingSounds = [
+            './sfx1.mp3',
+            './sfx2.mp3',
+            './sfx3.mp3',
+            './sfx4.mp3'
+        ];
+
+        function playRandomRaceSound() {
+            const audio = new Audio(racingSounds[Math.floor(Math.random() * racingSounds.length)]);
+            audio.volume = 0.8;
+            audio.play();
+        }
+
+        function spawnRacingCat(startY) {
+            const cat = document.createElement("img");
+            const src = racingCatImages[Math.floor(Math.random() * racingCatImages.length)];
+            cat.src = src;
+            cat.classList.add("racing-cat");
+            cat.style.position = "fixed";
+            cat.style.left = "-100px";
+            cat.style.top = `${startY}px`;
+            cat.style.width = "80px";
+            cat.style.zIndex = 999;
+            cat.style.pointerEvents = "none";
+            document.body.appendChild(cat);
+
+            cat.onload = () => {
+                const duration = 3000 + Math.random() * 3000;
+                cat.style.transition = `left ${duration}ms linear`;
+                cat.style.left = "110vw";
+
+                setTimeout(() => playRandomRaceSound(), 500);
+
+                setTimeout(() => cat.remove(), duration + 500);
+            };
+        }
+
+        racingFlag.addEventListener("click", () => {
+            const minCats = 8;
+            const maxCats = 250; // you can adjust max count here
+            const totalCats = Math.floor(Math.random() * (maxCats - minCats + 1)) + minCats;
+
+            // Clear any previous racing cats just in case (optional)
+            document.querySelectorAll(".racing-cat").forEach(cat => cat.remove());
+
+            for (let i = 0; i < totalCats; i++) {
+                // Distribute cats vertically, spread evenly but add randomness (+/- 30px)
+                const spacing = window.innerHeight / totalCats;
+                let startY = spacing * i + (Math.random() * 60 - 30);
+                // Clamp position so cats stay visible vertically
+                startY = Math.min(Math.max(startY, 50), window.innerHeight - 100);
+
+                // Random delay up to 2 seconds to stagger the start
+                const delay = Math.random() * 2000;
+
+                spawnRacingCat(startY, delay);
+            }
+        });
+    </script>
+</body>
+</html>
+
